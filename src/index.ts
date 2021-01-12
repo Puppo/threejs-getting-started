@@ -1,8 +1,10 @@
 import * as THREE from 'three'
+import { Cube } from './cube'
 
 import '../scss/index.scss'
 
-let scene: THREE.Scene, camera: THREE.Camera, renderer: THREE.Renderer;
+let scene: THREE.Scene, camera: THREE.Camera, renderer: THREE.Renderer, cube: Cube;
+let ADD = -0.10
 
 const init = () => {
     scene = new THREE.Scene()
@@ -16,6 +18,9 @@ const init = () => {
     )
     camera.position.z = 5
 
+    cube = new Cube(scene, 1, 1, 1, 0x00a1cb)
+    cube.init()
+
     renderer = new THREE.WebGLRenderer()
     renderer.setSize(window.innerWidth, window.innerHeight)
 
@@ -25,6 +30,8 @@ const init = () => {
 
 
 const mainLoop = () => {
+    cube.rotationY -= ADD
+
     renderer.render(scene, camera)
     requestAnimationFrame(mainLoop);
 }
