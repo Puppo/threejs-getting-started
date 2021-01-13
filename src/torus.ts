@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 export class Torus {
-  private torus: THREE.Mesh;
+  protected torus: THREE.Mesh;
 
   public get rotationX(): number {
     return this.torus.rotation.x;
@@ -15,6 +15,12 @@ export class Torus {
   }
   public set rotationY(v: number) {
     this.torus.rotation.y = v;
+  }
+  public get positionY(): number {
+    return this.torus.position.y;
+  }
+  public set positionY(v: number) {
+    this.torus.position.y = v;
   }
 
   constructor(
@@ -30,8 +36,7 @@ export class Torus {
       radius,
       tube,
       radialSegments,
-      tubularSegments,
-      Math.PI
+      tubularSegments
     );
     const material = new THREE.MeshBasicMaterial({
       color,

@@ -1,21 +1,22 @@
 import * as THREE from "three";
 import { Torus } from "./torus";
+import { Donut } from "./donut";
 
 import "../scss/index.scss";
 
 let scene: THREE.Scene,
   camera: THREE.Camera,
   renderer: THREE.Renderer,
-  torus: Torus;
+  donuts: Torus[] = [];
 
-const ADD = 0.01;
+const ADD = 0.1;
+
+const randomRange = (to: number, from: number) =>
+  Math.random() * (from - to) + to;
 
 const init = () => {
   scene = new THREE.Scene();
   scene.background = new THREE.Color("#ededed");
-
-  torus = new Torus(scene, 1, 0.2, 30, 30, 0xffffff, true);
-  torus.init();
 
   camera = new THREE.PerspectiveCamera(
     30,
@@ -32,8 +33,23 @@ const init = () => {
 };
 
 const mainLoop = () => {
-  torus.rotationX += ADD;
-  torus.rotationY += ADD;
+  if (Math.random() < 0.2) {
+    const donut = new Donut(
+      scene,
+      {
+        x: randomRange(-15, 15),
+        z: randomRange(-15, 15),
+      },
+      {
+        x: randomRange(-0.5, 0.5),
+        y: randomRange(-0.5, 0.5),
+      }
+    );
+    donut.init();
+    donuts.push(donut);
+  }
+
+  donuts.forEach(donut => (donut.positionY -= ADD));
   renderer.render(scene, camera);
   requestAnimationFrame(mainLoop);
 };
