@@ -1,33 +1,42 @@
-import * as THREE from 'three'
+import * as THREE from "three";
+import { Torus } from "./torus";
 
-import '../scss/index.scss'
+import "../scss/index.scss";
 
-let scene: THREE.Scene, camera: THREE.Camera, renderer: THREE.Renderer;
+let scene: THREE.Scene,
+  camera: THREE.Camera,
+  renderer: THREE.Renderer,
+  torus: Torus;
+
+const ADD = 0.01;
 
 const init = () => {
-    scene = new THREE.Scene()
-    scene.background = new THREE.Color('#ededed')
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color("#ededed");
 
-    camera = new THREE.PerspectiveCamera(
-        30,
-        window.innerWidth / window.innerHeight,
-        1,
-        1000
-    )
-    camera.position.z = 5
+  torus = new Torus(scene, 1, 0.2, 30, 30, 0xffffff, true);
+  torus.init();
 
-    renderer = new THREE.WebGLRenderer()
-    renderer.setSize(window.innerWidth, window.innerHeight)
+  camera = new THREE.PerspectiveCamera(
+    30,
+    window.innerWidth / window.innerHeight,
+    1,
+    1000
+  );
+  camera.position.z = 5;
 
-    document.body.append(renderer.domElement)
-}
+  renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
 
-
+  document.body.append(renderer.domElement);
+};
 
 const mainLoop = () => {
-    renderer.render(scene, camera)
-    requestAnimationFrame(mainLoop);
-}
+  torus.rotationX += ADD;
+  torus.rotationY += ADD;
+  renderer.render(scene, camera);
+  requestAnimationFrame(mainLoop);
+};
 
-init()
-mainLoop()
+init();
+mainLoop();
