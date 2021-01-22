@@ -1,6 +1,7 @@
-const path = require('path');
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require("path");
+const webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 
 /*
  * SplitChunksPlugin is enabled by default and replaced
@@ -23,50 +24,60 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
  *
  */
 
-const TerserPlugin = require('terser-webpack-plugin');
-const { dirname } = require('path');
-
-
-
+const TerserPlugin = require("terser-webpack-plugin");
+const { dirname } = require("path");
 
 module.exports = {
-  mode: 'development',
-  entry: './src/index.ts',
+  mode: "development",
+  entry: "./src/index.ts",
   output: {
-    path: path.resolve(__dirname, './dist'),
-    filename: 'index_bundle.js'
+    path: path.resolve(__dirname, "dist"),
+    filename: "index_bundle.js",
   },
-  plugins: [new webpack.ProgressPlugin(), new HtmlWebpackPlugin()],
+  plugins: [
+    new webpack.ProgressPlugin(),
+    new HtmlWebpackPlugin(),
+    new CopyPlugin({
+      patterns: [{ from: "public", to: "public" }],
+    }),
+  ],
 
   module: {
-    rules: [{
-      test: /\.(ts|tsx)$/,
-      loader: 'ts-loader',
-      include: [path.resolve(__dirname, 'src')],
-      exclude: [/node_modules/]
-    }, {
-      test: /.(scss|css)$/,
+    rules: [
+      {
+        test: /\.(ts|tsx)$/,
+        loader: "ts-loader",
+        include: [path.resolve(__dirname, "src")],
+        exclude: [/node_modules/],
+      },
+      {
+        test: /.(scss|css)$/,
 
-      use: [{
-        loader: "style-loader"
-      }, {
-        loader: "css-loader",
+        use: [
+          {
+            loader: "style-loader",
+          },
+          {
+            loader: "css-loader",
 
-        options: {
-          sourceMap: true
-        }
-      }, {
-        loader: "sass-loader",
+            options: {
+              sourceMap: true,
+            },
+          },
+          {
+            loader: "sass-loader",
 
-        options: {
-          sourceMap: true
-        }
-      }]
-    }]
+            options: {
+              sourceMap: true,
+            },
+          },
+        ],
+      },
+    ],
   },
 
   resolve: {
-    extensions: ['.tsx', '.ts', '.js']
+    extensions: [".tsx", ".ts", ".js"],
   },
 
   optimization: {
@@ -76,14 +87,14 @@ module.exports = {
       cacheGroups: {
         vendors: {
           priority: -10,
-          test: /[\\/]node_modules[\\/]/
-        }
+          test: /[\\/]node_modules[\\/]/,
+        },
       },
 
-      chunks: 'async',
+      chunks: "async",
       minChunks: 1,
       minSize: 30000,
-      name: false
-    }
-  }
-}
+      name: false,
+    },
+  },
+};
