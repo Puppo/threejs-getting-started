@@ -1,12 +1,15 @@
 import * as THREE from "three";
+import { MeshBasicMaterial } from "three";
 
 import "../scss/index.scss";
 
 let scene: THREE.Scene,
   camera: THREE.Camera,
   renderer: THREE.Renderer,
-  ADD = 0.01,
-  hemisphereLight: THREE.HemisphereLight;
+  ADD = 0.1,
+  directionalLight: THREE.DirectionalLight,
+  directionalLightHelper: THREE.DirectionalLightHelper,
+  sun: THREE.Mesh;
 
 const createScene = (scene: THREE.Scene) => {
   const boxGeometry = new THREE.BoxBufferGeometry(5, 5, 5);
@@ -56,9 +59,23 @@ const init = () => {
 
   createScene(scene);
 
-  hemisphereLight = new THREE.HemisphereLight(0x0000ff, 0x00ff00);
-  hemisphereLight.position.set(0, 50, 0);
-  scene.add(hemisphereLight);
+  directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+  directionalLight.position.set(-50, 50, -50);
+  const sphereGeometry = new THREE.SphereBufferGeometry(2, 20, 20);
+  sun = new THREE.Mesh(
+    sphereGeometry,
+    new MeshBasicMaterial({
+      color: 0xffff00,
+    })
+  );
+  sun.position.set(-50, 50, -50);
+  directionalLightHelper = new THREE.DirectionalLightHelper(
+    directionalLight,
+    10
+  );
+  scene.add(sun);
+  scene.add(directionalLight);
+  scene.add(directionalLightHelper);
 
   renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -70,8 +87,13 @@ const mainLoop = () => {
   renderer.render(scene, camera);
   requestAnimationFrame(mainLoop);
 
-  hemisphereLight.intensity += ADD;
-  if (hemisphereLight.intensity >= 8 || hemisphereLight.intensity < 1) {
+  directionalLight.position.x += ADD;
+  sun.position.x += ADD;
+  directionalLightHelper.update();
+  if (
+    directionalLight.position.x >= 100 ||
+    directionalLight.position.x < -100
+  ) {
     ADD *= -1;
   }
 };
