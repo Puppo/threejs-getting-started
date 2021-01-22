@@ -37,9 +37,10 @@ module.exports = {
   plugins: [
     new webpack.ProgressPlugin(),
     new HtmlWebpackPlugin(),
-    new CopyPlugin({
-      patterns: [{ from: "public", to: "public" }],
-    }),
+    // ,
+    // new CopyPlugin({
+    //   patterns: [{ from: "public", to: "public" }],
+    // }),
   ],
 
   module: {
