@@ -6,7 +6,7 @@ let scene: THREE.Scene,
   camera: THREE.Camera,
   renderer: THREE.Renderer,
   ADD = 0.01,
-  ambientLight: THREE.AmbientLight;
+  hemisphereLight: THREE.HemisphereLight;
 
 const createScene = (scene: THREE.Scene) => {
   const boxGeometry = new THREE.BoxBufferGeometry(5, 5, 5);
@@ -16,13 +16,18 @@ const createScene = (scene: THREE.Scene) => {
     side: THREE.DoubleSide,
   });
   const box = new THREE.Mesh(boxGeometry, material);
-  box.position.set(-10, 0, -10);
+  box.position.set(-10, 2.5, -10);
   scene.add(box);
 
   const coneGeometry = new THREE.ConeGeometry(3, 4, 20, 1, true);
   const cone = new THREE.Mesh(coneGeometry, material);
-  cone.position.set(10, 0, 10);
+  cone.position.set(10, 2, 10);
   scene.add(cone);
+
+  const sphereGeometry = new THREE.SphereBufferGeometry(2, 20, 20);
+  const sphere = new THREE.Mesh(sphereGeometry, material);
+  sphere.position.set(0, 2, 10);
+  scene.add(sphere);
 
   const planeGeometry = new THREE.PlaneBufferGeometry(1000, 1000, 50, 50);
   const planeMaterial = new THREE.MeshPhongMaterial({
@@ -51,9 +56,9 @@ const init = () => {
 
   createScene(scene);
 
-  ambientLight = new THREE.AmbientLight(0xffffff, 1);
-  ambientLight.position.set(0, 50, 0);
-  scene.add(ambientLight);
+  hemisphereLight = new THREE.HemisphereLight(0x0000ff, 0x00ff00);
+  hemisphereLight.position.set(0, 50, 0);
+  scene.add(hemisphereLight);
 
   renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -65,8 +70,8 @@ const mainLoop = () => {
   renderer.render(scene, camera);
   requestAnimationFrame(mainLoop);
 
-  ambientLight.intensity += ADD;
-  if (ambientLight.intensity >= 8 || ambientLight.intensity < 1) {
+  hemisphereLight.intensity += ADD;
+  if (hemisphereLight.intensity >= 8 || hemisphereLight.intensity < 1) {
     ADD *= -1;
   }
 };
