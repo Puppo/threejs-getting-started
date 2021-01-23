@@ -6,12 +6,8 @@ import "../scss/index.scss";
 let scene: THREE.Scene,
   camera: THREE.Camera,
   renderer: THREE.Renderer,
-  pointLight1: THREE.PointLight,
-  sun1: THREE.Mesh,
-  pointLight2: THREE.PointLight,
-  sun2: THREE.Mesh,
-  ADD = 0.03,
-  theta = 0;
+  pointLight: THREE.SpotLight,
+  ADD = 0.1;
 
 const createScene = (scene: THREE.Scene) => {
   const boxGeometry = new THREE.BoxBufferGeometry(10, 10, 10);
@@ -21,7 +17,7 @@ const createScene = (scene: THREE.Scene) => {
     side: THREE.DoubleSide,
   });
   const box = new THREE.Mesh(boxGeometry, material);
-  box.position.set(0, 5, 0);
+  box.position.set(5, 5, 0);
   box.rotateX(5);
   box.rotateZ(5);
   scene.add(box);
@@ -43,26 +39,9 @@ const init = () => {
 
   createScene(scene);
 
-  pointLight1 = new THREE.PointLight(0xffffff, 1);
-  const sphereGeometry = new THREE.SphereBufferGeometry(2, 20, 20);
-  sun1 = new THREE.Mesh(
-    sphereGeometry,
-    new MeshBasicMaterial({
-      color: 0xffff00,
-    })
-  );
-  scene.add(sun1);
-  scene.add(pointLight1);
-
-  pointLight2 = new THREE.PointLight(0xffffff, 1);
-  sun2 = new THREE.Mesh(
-    sphereGeometry,
-    new MeshBasicMaterial({
-      color: 0xffff00,
-    })
-  );
-  scene.add(sun2);
-  scene.add(pointLight2);
+  pointLight = new THREE.SpotLight(0xffffff, 1, 200, Math.PI / 2, 0.5, 0.5);
+  pointLight.position.set(15, 15, 0);
+  scene.add(pointLight);
 
   renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -74,17 +53,10 @@ const mainLoop = () => {
   renderer.render(scene, camera);
   requestAnimationFrame(mainLoop);
 
-  pointLight1.position.x = 15 * Math.cos(theta);
-  pointLight1.position.z = 15 * Math.sin(theta);
-  sun1.position.x = pointLight1.position.x;
-  sun1.position.z = pointLight1.position.z;
-
-  pointLight2.position.y = -20 * Math.cos(theta);
-  pointLight2.position.z = -20 * Math.sin(theta);
-  sun2.position.y = pointLight2.position.y;
-  sun2.position.z = pointLight2.position.z;
-
-  theta += ADD;
+  pointLight.position.y += ADD;
+  if (pointLight.position.y <= 11 || pointLight.position.y >= 25) {
+    ADD *= -1;
+  }
 };
 
 init();
