@@ -6,41 +6,25 @@ import "../scss/index.scss";
 let scene: THREE.Scene,
   camera: THREE.Camera,
   renderer: THREE.Renderer,
-  ADD = 0.1,
-  directionalLight: THREE.DirectionalLight,
-  directionalLightHelper: THREE.DirectionalLightHelper,
-  sun: THREE.Mesh;
+  pointLight1: THREE.PointLight,
+  sun1: THREE.Mesh,
+  pointLight2: THREE.PointLight,
+  sun2: THREE.Mesh,
+  ADD = 0.03,
+  theta = 0;
 
 const createScene = (scene: THREE.Scene) => {
-  const boxGeometry = new THREE.BoxBufferGeometry(5, 5, 5);
+  const boxGeometry = new THREE.BoxBufferGeometry(10, 10, 10);
   const material = new THREE.MeshPhongMaterial({
-    color: 0x0f1d89,
+    color: 0xffff00,
     shininess: 100,
     side: THREE.DoubleSide,
   });
   const box = new THREE.Mesh(boxGeometry, material);
-  box.position.set(-10, 2.5, -10);
+  box.position.set(0, 5, 0);
+  box.rotateX(5);
+  box.rotateZ(5);
   scene.add(box);
-
-  const coneGeometry = new THREE.ConeGeometry(3, 4, 20, 1, true);
-  const cone = new THREE.Mesh(coneGeometry, material);
-  cone.position.set(10, 2, 10);
-  scene.add(cone);
-
-  const sphereGeometry = new THREE.SphereBufferGeometry(2, 20, 20);
-  const sphere = new THREE.Mesh(sphereGeometry, material);
-  sphere.position.set(0, 2, 10);
-  scene.add(sphere);
-
-  const planeGeometry = new THREE.PlaneBufferGeometry(1000, 1000, 50, 50);
-  const planeMaterial = new THREE.MeshPhongMaterial({
-    color: 0x693421,
-    side: THREE.DoubleSide,
-  });
-  const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-  plane.rotateX(-Math.PI / 2);
-
-  scene.add(plane);
 };
 
 const init = () => {
@@ -59,23 +43,26 @@ const init = () => {
 
   createScene(scene);
 
-  directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-  directionalLight.position.set(-50, 50, -50);
+  pointLight1 = new THREE.PointLight(0xffffff, 1);
   const sphereGeometry = new THREE.SphereBufferGeometry(2, 20, 20);
-  sun = new THREE.Mesh(
+  sun1 = new THREE.Mesh(
     sphereGeometry,
     new MeshBasicMaterial({
       color: 0xffff00,
     })
   );
-  sun.position.set(-50, 50, -50);
-  directionalLightHelper = new THREE.DirectionalLightHelper(
-    directionalLight,
-    10
+  scene.add(sun1);
+  scene.add(pointLight1);
+
+  pointLight2 = new THREE.PointLight(0xffffff, 1);
+  sun2 = new THREE.Mesh(
+    sphereGeometry,
+    new MeshBasicMaterial({
+      color: 0xffff00,
+    })
   );
-  scene.add(sun);
-  scene.add(directionalLight);
-  scene.add(directionalLightHelper);
+  scene.add(sun2);
+  scene.add(pointLight2);
 
   renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -87,15 +74,17 @@ const mainLoop = () => {
   renderer.render(scene, camera);
   requestAnimationFrame(mainLoop);
 
-  directionalLight.position.x += ADD;
-  sun.position.x += ADD;
-  directionalLightHelper.update();
-  if (
-    directionalLight.position.x >= 100 ||
-    directionalLight.position.x < -100
-  ) {
-    ADD *= -1;
-  }
+  pointLight1.position.x = 15 * Math.cos(theta);
+  pointLight1.position.z = 15 * Math.sin(theta);
+  sun1.position.x = pointLight1.position.x;
+  sun1.position.z = pointLight1.position.z;
+
+  pointLight2.position.y = -20 * Math.cos(theta);
+  pointLight2.position.z = -20 * Math.sin(theta);
+  sun2.position.y = pointLight2.position.y;
+  sun2.position.z = pointLight2.position.z;
+
+  theta += ADD;
 };
 
 init();
